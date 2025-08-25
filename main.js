@@ -155,6 +155,28 @@ canvas.addEventListener("touchmove",(e)=>{
 },{passive:false});
 canvas.addEventListener("touchend",(e)=>{ e.preventDefault(); dropCurrent(); },{passive:false});
 
+// 重なり解消＆少し上げる関数
+function liftCurrent(current){
+  const all = Composite.allBodies(engine.world).filter(b=>!b.isStatic && b!==current);
+  const step = 5;       // 重なっているときの上げ幅
+  const extraStep = 5;  // バグ防止で少し追加
+
+  let overlap = false;
+  // 重なっているかチェック
+  do{
+    overlap = false;
+    for(let b of all){
+      if(Matter.Bounds.overlaps(current.bounds,b.bounds)){
+        overlap = true;
+        Body.translate(current,{x:0,y:-step});
+      }
+    }
+  }while(overlap);
+
+  // バグ防止用に少しだけ追加
+  Body.translate(current,{x:0,y:-extraStep});
+}
+
 function dropCurrent(){
   if(!current) return;
   current.render.opacity = 1;
@@ -164,23 +186,8 @@ function dropCurrent(){
   Body.setStatic(current,false);
   current.isDraggable=false;
 
-  // 触れていないところまで上に上げる処理
-  const step = 2;
-  const maxStep = 100;
-  let moved=0;
-  let blocked=false;
-  while(!blocked && moved<maxStep){
-    Body.translate(current,{x:0,y:-step});
-    const all = Composite.allBodies(engine.world).filter(b=>!b.isStatic && b!==current);
-    for(let b of all){
-      if(Matter.Bounds.overlaps(current.bounds,b.bounds)){
-        blocked=true;
-        Body.translate(current,{x:0,y:step}); // 元に戻す
-        break;
-      }
-    }
-    moved+=step;
-  }
+  // 重なり解消＆少しだけ上げる
+  liftCurrent(current);
 
   current=null;
   if(!gameOver) setTimeout(spawn,500);
@@ -253,4 +260,3 @@ async function checkGameOver(){
 }
 
 Events.on(engine,"afterUpdate",()=>{ checkConnected(); checkGameOver(); });
-
