@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>The Simple!!</title>
+<link rel="stylesheet" href="style.css">
+<link rel="manifest" href="manifest.json"> <!-- ここを追加 -->
+</head>
+<body>
+<canvas id="gameCanvas"></canvas>
+<div id="scoreDisplay">Score: 0</div>
+<div id="gameOverPanel"></div>
+
+<!-- Firebase と Matter.js のスクリプトは元のまま -->
+<script type="module" src="main.js"></script>
+
+<!-- Service Worker 登録 -->
+<script>
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('service-worker.js')
+    .then(() => console.log('Service Worker登録成功'))
+    .catch(err => console.error('Service Worker登録失敗:', err));
+}
+</script>
+</body>
+</html>
