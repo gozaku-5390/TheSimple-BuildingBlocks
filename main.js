@@ -234,7 +234,7 @@ async function checkGameOver(){
     if(b===current) continue;
     if(b.position.y<minY) minY=b.position.y;
   }
-  if(minY <= spawnY - 5){
+  if(minY <= spawnY - 15){
     gameOver=true;
     if(score > window.firebaseStuff.getTodayRecord()){
       await window.firebaseStuff.updateTodayRecord(score);
@@ -253,3 +253,4 @@ async function checkGameOver(){
 }
 
 Events.on(engine,"afterUpdate",()=>{ checkConnected(); checkGameOver(); });
+
