@@ -4,17 +4,17 @@
 <meta charset="UTF-8">
 <title>The Simple!!</title>
 <link rel="stylesheet" href="style.css">
-<link rel="manifest" href="manifest.json"> <!-- ここを追加 -->
+<link rel="manifest" href="manifest.json">
+<!-- Matter.jsを追加 -->
+<script src="https://cdn.jsdelivr.net/npm/matter-js@0.19.0/build/matter.min.js"></script>
 </head>
 <body>
 <canvas id="gameCanvas"></canvas>
 <div id="scoreDisplay">Score: 0</div>
 <div id="gameOverPanel"></div>
 
-<!-- Firebase と Matter.js のスクリプトは元のまま -->
 <script type="module" src="main.js"></script>
 
-<!-- Service Worker 登録 -->
 <script>
 if('serviceWorker' in navigator){
   navigator.serviceWorker.register('service-worker.js')
