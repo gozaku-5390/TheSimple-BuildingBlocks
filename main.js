@@ -155,26 +155,32 @@ canvas.addEventListener("touchmove",(e)=>{
 },{passive:false});
 canvas.addEventListener("touchend",(e)=>{ e.preventDefault(); dropCurrent(); },{passive:false});
 
-// 重なり解消＆少し上げる関数
+// 重なりを解除して少し上に上げる関数
 function liftCurrent(current){
+  if(!current) return;
   const all = Composite.allBodies(engine.world).filter(b=>!b.isStatic && b!==current);
-  const step = 5;       // 重なっているときの上げ幅
-  const extraStep = 5;  // バグ防止で少し追加
+  const step = 5;
+  const extraStep = 5;
 
-  let overlap = false;
-  // 重なっているかチェック
+  let overlapExists = false;
+
+  // 重なりがある限り上に移動
+  let moved;
   do{
-    overlap = false;
+    moved = false;
     for(let b of all){
       if(Matter.Bounds.overlaps(current.bounds,b.bounds)){
-        overlap = true;
+        overlapExists = true;
         Body.translate(current,{x:0,y:-step});
+        moved = true;
       }
     }
-  }while(overlap);
+  }while(moved);
 
-  // バグ防止用に少しだけ追加
-  Body.translate(current,{x:0,y:-extraStep});
+  // 重なりがあった場合のみ少し上げてバグ防止
+  if(overlapExists){
+    Body.translate(current,{x:0,y:-extraStep});
+  }
 }
 
 function dropCurrent(){
@@ -186,8 +192,7 @@ function dropCurrent(){
   Body.setStatic(current,false);
   current.isDraggable=false;
 
-  // 重なり解消＆少しだけ上げる
-  liftCurrent(current);
+  liftCurrent(current); // 重なり解除処理
 
   current=null;
   if(!gameOver) setTimeout(spawn,500);
